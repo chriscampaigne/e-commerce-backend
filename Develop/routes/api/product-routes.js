@@ -1,5 +1,4 @@
 const router = require('express').Router();
-
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
@@ -19,13 +18,13 @@ router.get('/', (req, res) => {
     include: [
       {
         model:Category,
-        attributes: ['id','category_name'],
-        include: {
+        attributes: ['id','category_name']
+      },
+        {
           model: Tag,
           attributes: ['id','tag_name']
         }
-      }
-    ]
+      ]
   })
   .then(dbProductData => res.json(dbProductData))
   .catch(err => {
@@ -53,11 +52,12 @@ router.get('/:id', (req, res) => {
       {
         model:Category,
         attributes: ['id','category_name'],
-        include: {
+      },
+        {
           model: Tag,
           attributes: ['id','tag_name']
         }
-      }
+      
     ]
   })
   .then(dbProductData => {
@@ -83,11 +83,7 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
-  Product.create({
-    product_name: req.body.product_name,
-    price: req.body.price,
-    stock: req.body.stock
-  })
+  Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
       if (req.body.tagIds.length) {
